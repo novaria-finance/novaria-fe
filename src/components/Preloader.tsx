@@ -1,6 +1,6 @@
 const Preloader = () => {
   return (
-    <div className="fixed z-50 top-0 left-0 w-screen h-screen bg-black/70 flex flex-col items-center justify-center gap-4">
+    <div className="fixed z-[999] top-0 left-0 w-screen h-screen bg-black/70 flex flex-col items-center justify-center gap-4">
       <div role="status">
         <svg
           aria-hidden="true"

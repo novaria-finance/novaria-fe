@@ -27,7 +27,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <CustomRainbowContext>
           <Navbar />
           <main className="bg-gradient-to-t from-zinc-950 from-60% to-teal-950 relative w-screen min-h-screen">
-            <div className="relative pt-[100px]  text-blue-100 w-full max-w-[1440px] mx-auto">
+            <div className="relative pt-[100px] text-blue-100 w-full max-w-[1440px] mx-auto">
               {children}
             </div>
             <div className="absolute w-[300px] bottom-0 h-[200px] rounded-full bg-main blur-[200px]"></div>

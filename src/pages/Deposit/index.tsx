@@ -3,7 +3,7 @@ import { Input, NovariaTokenLogo } from "@/components/ui/Input"
 import ClockIcon from "@/components/icon/ClockIcon"
 import FuelIcon from "@/components/icon/FuelIcon"
 import { FUNDING_VAULT_ADDRESS, PRINCIPLE_TOKEN_ADDRESS } from "@/utils/constants"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { ChartComponent } from "@/components/ui/ChartComponent"
 import { toast } from "sonner"
 import Preloader from "@/components/Preloader"
@@ -53,32 +53,38 @@ interface PopupDetailProps {
 export const PopupDetail = ({ handleClosePopup }: PopupDetailProps) => {
   const { data: hash, isPending, writeContractAsync } = useWriteContract()
 
-  const { isLoading, isSuccess: _isSuccess } = useWaitForTransactionReceipt({
+  const { isLoading, isSuccess, isError } = useWaitForTransactionReceipt({
     hash: hash,
   })
-
   const [input, setInput] = useState("")
+
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success(`Success Deposit PT ${input} and YT ${input}`)
+      handleClosePopup()
+    } else if (isError) {
+      toast.error("Error Deposit PT and YT")
+      handleClosePopup()
+    }
+  }, [isSuccess, isError])
 
   const handleApproveAndDeposit = async () => {
     await writeContractAsync({
       abi: MockERC20Abi.abi,
       address: FUNDING_VAULT_ADDRESS,
       functionName: "approve",
-      args: [PRINCIPLE_TOKEN_ADDRESS, BigInt(100)],
+      args: [PRINCIPLE_TOKEN_ADDRESS, BigInt(Number(input) * 1e18)],
     })
       .then(async () => {
         await writeContractAsync({
           abi: mockVaultAbi.abi,
           address: PRINCIPLE_TOKEN_ADDRESS,
           functionName: "deposit",
-          args: [BigInt(100)],
+          args: [BigInt(Number(input) * 1e18)],
         })
-
-        toast.success(`Success Deposit PT: 100 YT: 100`)
       })
       .catch(err => {
         console.error(err)
-        toast.error("Errror Mint Token")
       })
   }
 

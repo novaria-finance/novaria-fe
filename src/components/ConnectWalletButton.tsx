@@ -97,7 +97,9 @@ export const ConnectWalletButton = () => {
                     // onClick={openChainModal}
                     className="relative bg-zinc-800 text-teal-200 cursor-pointer font-semibold flex items-center gap-2 rounded-full border border-teal-600 px-4 py-2"
                   >
-                    {`PT ${Number(ptBalance) || 0} / YT ${Number(ytBalance) || 0}`}
+                    {`PT ${Number(BigInt(ptBalance || 0n) / 10n ** 15n) / 1000 || 0} / YT ${
+                      Number(BigInt(ytBalance || 0n) / 10n ** 15n) / 1000 || 0
+                    }`}
                   </button>
                   {/* <button
                     onClick={openChainModal}

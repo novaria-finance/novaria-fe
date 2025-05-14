@@ -18,10 +18,10 @@ export const Mint = () => {
   const { address } = useAccount()
 
   const { data: mockBalance } = useReadContract({
-    abi: MockERC20Abi.abi,
+    abi: erc20Abi,
     address: MOCK_TOKEN_ADDRESS,
     functionName: "balanceOf",
-    args: [address],
+    args: [address as `0x${string}`],
   })
 
   const {
@@ -42,13 +42,14 @@ export const Mint = () => {
   useEffect(() => {
     if (isTransactionSuccess) {
       toast.success(`Success Mint ${mintAmount} 🪙🪙🪙`)
+      setMintAmount(0)
     } else if (isTransactionError) {
       toast.error(
         "Transaction Error: " +
           (transactionError instanceof Error ? transactionError.message : String(transactionError))
       )
     }
-  }, [isTransactionSuccess, isTransactionError, mintAmount])
+  }, [isTransactionSuccess, isTransactionError])
 
   const handleMint = async () => {
     try {
@@ -56,14 +57,14 @@ export const Mint = () => {
         abi: erc20Abi,
         address: MOCK_TOKEN_ADDRESS,
         functionName: "approve",
-        args: [FUNDING_VAULT_ADDRESS, BigInt(mintAmount)],
+        args: [FUNDING_VAULT_ADDRESS, BigInt(mintAmount * 1e18)],
       })
 
       await writeContractAsync({
         abi: mockVaultAbi.abi,
         address: FUNDING_VAULT_ADDRESS,
         functionName: "deposit",
-        args: [BigInt(mintAmount)],
+        args: [BigInt(mintAmount * 1e18)],
       })
     } catch (err) {
       console.error(err)
@@ -74,23 +75,8 @@ export const Mint = () => {
   return (
     <>
       {(isLoadingTransaction || isPendingTransaction) && <Preloader />}
-      <div className="flex items-center">
-        <div className="bg-zinc-900 w-[800px] rounded-md h-full mx-auto border border-main/10 p-8">
-          <div className="h-full">
-            {/* Set a fixed height that's about 10-20% of typical container */}
-            <ChartComponent
-              height={150}
-              data={[
-                { time: "2018-12-22", value: 10.51 },
-                { time: "2018-12-23", value: 11.11 },
-                { time: "2018-12-24", value: 12.02 },
-                { time: "2018-12-25", value: 13.32 },
-                { time: "2018-12-26", value: 14.17 },
-              ]}
-            />
-          </div>
-        </div>
-        <div className="rounded-3xl p-5 flex flex-col gap-6 items-center justify-center mt-12 bg-zinc-900 w-[400px] mx-auto border border-main/10">
+      <div className="flex items-center mt-10 justify-center gap-5 px-8">
+        <div className="rounded-3xl p-5 flex flex-col gap-6 items-center justify-center bg-zinc-900 w-[700px] z-50 mx-auto border border-main/10">
           <div className="flex flex-col gap-1">
             <div className="text-start w-full text-lg font-semibold">Input</div>
             <Input
@@ -108,7 +94,10 @@ export const Mint = () => {
               }}
             />
             <p className="text-xs text-white/50">
-              Your Balance {Number(mockBalance) / 1e18 - mintAmount}
+              Your Balance{" "}
+              {(Number(mockBalance) / 1e18 - mintAmount).toLocaleString(undefined, {
+                maximumFractionDigits: 4,
+              })}
             </p>
           </div>
 
@@ -147,6 +136,21 @@ export const Mint = () => {
           >
             Mint
           </button>
+        </div>
+        {/* Set a fixed height that's about 10-20% of typical container */}
+        <div className="flex justify-center items-center bg-zinc-900 h-[490px] my-auto w-full z-50 rounded-3xl border border-main/10 p-8">
+          <div className="w-full h-full">
+            <h1 className="text-2xl font-semibold mb-10">Annualized Funding Rate</h1>
+            <ChartComponent
+              data={[
+                { time: "2018-12-22", value: 10.51 },
+                { time: "2018-12-23", value: 11.11 },
+                { time: "2018-12-24", value: 12.02 },
+                { time: "2018-12-25", value: 13.32 },
+                { time: "2018-12-26", value: 14.17 },
+              ]}
+            />
+          </div>
         </div>
       </div>
     </>
