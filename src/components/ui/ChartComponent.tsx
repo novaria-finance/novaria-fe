@@ -1,10 +1,4 @@
-import {
-  AreaSeries,
-  createChart,
-  ColorType,
-  LineSeries,
-  LineStyle,
-} from "lightweight-charts"
+import { AreaSeries, createChart, ColorType, LineSeries, LineStyle } from "lightweight-charts"
 import React, { useEffect, useRef } from "react"
 
 export const ChartComponent = (props: any) => {
@@ -93,14 +87,7 @@ export const ChartComponent = (props: any) => {
       window.removeEventListener("resize", handleResize)
       chart.remove()
     }
-  }, [
-    data,
-    backgroundColor,
-    lineColor,
-    textColor,
-    areaTopColor,
-    areaBottomColor,
-  ])
+  }, [data, backgroundColor, lineColor, textColor, areaTopColor, areaBottomColor])
 
   return <div className="[&]" {...props} ref={chartContainerRef} />
 }

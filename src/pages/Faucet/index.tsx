@@ -1,6 +1,6 @@
 import { useEffect } from "react"
 import { MOCK_TOKEN_ADDRESS } from "@/utils/constants"
-import { useAccount, useWriteContract } from "wagmi"
+import { useAccount, useWaitForTransactionReceipt, useWriteContract } from "wagmi"
 import Preloader from "@/components/Preloader"
 import { toast } from "sonner"
 import { MockERC20Abi } from "@/lib/abis/mockERC20Abi"
@@ -8,16 +8,27 @@ import { MockERC20Abi } from "@/lib/abis/mockERC20Abi"
 const Faucet = () => {
   const { address } = useAccount()
 
-  const { isPending, writeContract, isSuccess, isError } = useWriteContract()
-  console.log("🚀 ~ Faucet ~ isSuccess:", isSuccess)
+  const { isPending, writeContractAsync, data: transactionHash } = useWriteContract()
 
-  const handleFaucet = () => {
-    writeContract({
-      abi: MockERC20Abi.abi,
-      address: MOCK_TOKEN_ADDRESS,
-      functionName: "mint",
-      args: [address, BigInt(1000e18)],
-    })
+  const {
+    isLoading,
+    isSuccess: isSuccessTransaction,
+    isError: isErrorTransaction,
+  } = useWaitForTransactionReceipt({
+    hash: transactionHash,
+  })
+
+  const handleFaucet = async () => {
+    try {
+      await writeContractAsync({
+        abi: MockERC20Abi.abi,
+        address: MOCK_TOKEN_ADDRESS,
+        functionName: "mint",
+        args: [address, BigInt(1000e18)],
+      })
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : String(error))
+    }
   }
 
   const addTokenAddress = async (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -47,12 +58,12 @@ const Faucet = () => {
   }
 
   useEffect(() => {
-    if (isSuccess) {
+    if (isSuccessTransaction) {
       toast.success("Success sending 1000 WBTC to your wallet")
-    } else if (isError) {
+    } else if (isErrorTransaction) {
       toast.error("Error sending 1000 WBTC to your wallet")
     }
-  }, [isSuccess, isError])
+  }, [isSuccessTransaction, isErrorTransaction])
 
   return (
     <>
@@ -84,7 +95,7 @@ const Faucet = () => {
         </p>
       </div>
 
-      {isPending && <Preloader />}
+      {(isPending || isLoading) && <Preloader />}
     </>
   )
 }

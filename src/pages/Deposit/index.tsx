@@ -82,12 +82,24 @@ export const PopupDetail = ({ handleClosePopup }: PopupDetailProps) => {
       })
   }
 
+  const handleBackgroundClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === e.currentTarget) {
+      handleClosePopup()
+    }
+  }
+
   return (
     <>
       {isLoading && <Preloader />}
 
-      <div className="fixed z-50 top-0 left-0 w-screen h-screen bg-black/70 flex flex-col items-center justify-center gap-4">
-        <div className="w-[80%] h-max bg-zinc-900 p-5 rounded-lg">
+      <div
+        className="fixed z-[9999] inset-0 w-screen h-screen bg-black/80 backdrop-blur-sm flex flex-col items-center justify-center gap-4"
+        onClick={handleBackgroundClick}
+      >
+        <div
+          className="w-[80%] h-max bg-zinc-900 p-5 rounded-lg"
+          onClick={e => e.stopPropagation()}
+        >
           <div className="grid grid-cols-12 gap-4 h-full">
             <div className="col-span-4 flex items-center">
               <div className="rounded-3xl border border-white/20 p-5 flex flex-col gap-6 items-center justify-center mx-auto">
@@ -173,6 +185,7 @@ export const PopupDetail = ({ handleClosePopup }: PopupDetailProps) => {
                 </button>
               </div>
               <ChartComponent
+                height={100} // Set a specific height in pixels
                 data={[
                   { time: "2018-12-22", value: 10.51 },
                   { time: "2018-12-23", value: 11.11 },

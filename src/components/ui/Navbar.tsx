@@ -12,7 +12,7 @@ const navbarItems = [
 
 export const Navbar = () => {
   return (
-    <nav className="fixed z-20 w-full mt-4">
+    <nav className="fixed w-full z-10 mt-4">
       <div className="relative flex items-center px-8 py-4 justify-between w-full max-w-[1440px] mx-auto bg-black/10 rounded-full border border-main/10 shadow">
         <div className="flex items-center gap-2">
           {/* <img src={NovariaLogo} className="size-7" /> */}
