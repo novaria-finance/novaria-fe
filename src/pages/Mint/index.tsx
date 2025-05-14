@@ -27,24 +27,31 @@ export const Mint = () => {
   const {
     data: transactionHash,
     isPending: isPendingTransaction,
-    writeContractAsync,
+    writeContractAsync: writeContractAsync,
   } = useWriteContract()
 
-  const { isLoading, isSuccess, isError } = useWaitForTransactionReceipt({
+  const {
+    isLoading: isLoadingTransaction,
+    isSuccess: isTransactionSuccess,
+    isError: isTransactionError,
+    error: transactionError,
+  } = useWaitForTransactionReceipt({
     hash: transactionHash,
   })
 
   useEffect(() => {
-    if (isSuccess) {
+    if (isTransactionSuccess) {
       toast.success(`Success Mint ${mintAmount} 🪙🪙🪙`)
-    } else if (isError) {
-      toast.error("Error Minting Token")
+    } else if (isTransactionError) {
+      toast.error(
+        "Transaction Error: " +
+          (transactionError instanceof Error ? transactionError.message : String(transactionError))
+      )
     }
-  }, [isSuccess, isError, mintAmount])
+  }, [isTransactionSuccess, isTransactionError, mintAmount])
 
-  const handleMintAndApprove = async () => {
+  const handleMint = async () => {
     try {
-      // Approve
       await writeContractAsync({
         abi: erc20Abi,
         address: MOCK_TOKEN_ADDRESS,
@@ -52,22 +59,21 @@ export const Mint = () => {
         args: [FUNDING_VAULT_ADDRESS, BigInt(mintAmount)],
       })
 
-      // Mint
       await writeContractAsync({
         abi: mockVaultAbi.abi,
         address: FUNDING_VAULT_ADDRESS,
-        functionName: "createOrder",
-        args: [BigInt(mintAmount), MOCK_TOKEN_ADDRESS, BigInt(1), false],
+        functionName: "deposit",
+        args: [BigInt(mintAmount)],
       })
     } catch (err) {
       console.error(err)
-      toast.error("Error Minting Token: " + (err instanceof Error ? err.message : String(err)))
+      toast.error("Error in Transaction: " + (err instanceof Error ? err.message : String(err)))
     }
   }
 
   return (
     <>
-      {(isPendingTransaction || isLoading) && <Preloader />}
+      {(isLoadingTransaction || isPendingTransaction) && <Preloader />}
       <div className="flex items-center">
         <div className="bg-zinc-900 w-[800px] rounded-md h-full mx-auto border border-main/10 p-8">
           <div className="h-full">
@@ -136,7 +142,7 @@ export const Mint = () => {
 
           <button
             className="w-full border border-main/50 bg-main/10 px-4 py-2 rounded-lg text-sm text-white cursor-pointer hover:border-main hover:bg-main/40 transition-all disabled:opacity-50"
-            onClick={handleMintAndApprove}
+            onClick={handleMint}
             disabled={mintAmount < 1}
           >
             Mint
