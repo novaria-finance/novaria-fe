@@ -2,7 +2,7 @@ import { PRINCIPLE_TOKEN_ADDRESS, YIELD_TOKEN_ADDRESS } from "@/utils/constants"
 import { ConnectButton } from "@rainbow-me/rainbowkit"
 import clsx from "clsx"
 import { useAccount, useReadContract } from "wagmi"
-import mockErc20 from "@/data/mockERC20.json"
+import { erc20Abi } from "viem"
 
 type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement>
 
@@ -32,17 +32,19 @@ const CustomButton = (props: ButtonProps) => {
 export const ConnectWalletButton = () => {
   const { address } = useAccount()
   const { data: ptBalance } = useReadContract({
-    abi: mockErc20,
+    abi: erc20Abi,
     address: PRINCIPLE_TOKEN_ADDRESS,
     functionName: "balanceOf",
-    args: [address],
+    args: [address as `0x${string}`],
   })
   const { data: ytBalance } = useReadContract({
-    abi: mockErc20,
+    abi: erc20Abi,
     address: YIELD_TOKEN_ADDRESS,
     functionName: "balanceOf",
-    args: [address],
+    args: [address as `0x${string}`],
   })
+
+  console.log(ptBalance, ytBalance)
   return (
     <ConnectButton.Custom>
       {({
@@ -95,7 +97,7 @@ export const ConnectWalletButton = () => {
                     // onClick={openChainModal}
                     className="relative bg-zinc-800 text-teal-200 cursor-pointer font-semibold flex items-center gap-2 rounded-full border border-teal-600 px-4 py-2"
                   >
-                    {`PT ${Number(ptBalance)} / YT ${Number(ytBalance)}`}
+                    {`PT ${Number(ptBalance) || 0} / YT ${Number(ytBalance) || 0}`}
                   </button>
                   {/* <button
                     onClick={openChainModal}
