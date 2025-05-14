@@ -1,6 +1,4 @@
 import { useWaitForTransactionReceipt, useWriteContract } from "wagmi"
-import mockErc20 from "@/data/mockERC20.json"
-import mockVault from "@/data/mockVault.json"
 import { Input, NovariaTokenLogo } from "@/components/ui/Input"
 import ClockIcon from "@/components/icon/ClockIcon"
 import FuelIcon from "@/components/icon/FuelIcon"
@@ -9,6 +7,8 @@ import { useState } from "react"
 import { ChartComponent } from "@/components/ui/ChartComponent"
 import { toast } from "sonner"
 import Preloader from "@/components/Preloader"
+import { MockERC20Abi } from "@/lib/abis/mockERC20Abi"
+import { mockVaultAbi } from "@/lib/abis/mockVaultAbi"
 
 export const Deposit = () => {
   const [isOpen, setIsOpen] = useState(false)
@@ -61,14 +61,14 @@ export const PopupDetail = ({ handleClosePopup }: PopupDetailProps) => {
 
   const handleApproveAndDeposit = async () => {
     await writeContractAsync({
-      abi: mockErc20,
+      abi: MockERC20Abi.abi,
       address: FUNDING_VAULT_ADDRESS,
       functionName: "approve",
       args: [PRINCIPLE_TOKEN_ADDRESS, BigInt(100)],
     })
       .then(async () => {
         await writeContractAsync({
-          abi: mockVault,
+          abi: mockVaultAbi.abi,
           address: PRINCIPLE_TOKEN_ADDRESS,
           functionName: "deposit",
           args: [BigInt(100)],

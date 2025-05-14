@@ -1,8 +1,8 @@
 import { PRINCIPLE_TOKEN_ADDRESS, YIELD_TOKEN_ADDRESS } from "@/utils/constants"
 import { ConnectButton } from "@rainbow-me/rainbowkit"
-import clsx from "clsx"
 import { useAccount, useReadContract } from "wagmi"
 import { erc20Abi } from "viem"
+import clsx from "clsx"
 
 type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement>
 

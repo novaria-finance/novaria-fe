@@ -6,7 +6,6 @@ import { Deposit } from "./pages/Deposit"
 import { Mint } from "./pages/Mint"
 import { Swap } from "./pages/Swap"
 import Faucet from "./pages/Faucet"
-import { Bridge } from "./pages/Bridge"
 import { Toaster } from "sonner"
 
 function App() {
@@ -22,7 +21,7 @@ function App() {
           {/* <Route path="/bridge" element={<Bridge />} /> */}
         </Routes>
       </Layout>
-      <Toaster />
+      <Toaster richColors />
     </>
   )
 }

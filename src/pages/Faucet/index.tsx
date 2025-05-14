@@ -1,30 +1,58 @@
-import React, { useEffect } from "react"
-import mockErc20 from "@/data/mockERC20.json"
+import { useEffect } from "react"
 import { MOCK_TOKEN_ADDRESS } from "@/utils/constants"
 import { useAccount, useWriteContract } from "wagmi"
 import Preloader from "@/components/Preloader"
 import { toast } from "sonner"
+import { MockERC20Abi } from "@/lib/abis/mockERC20Abi"
 
 const Faucet = () => {
   const { address } = useAccount()
 
-  const { isPending, writeContract, isSuccess } = useWriteContract()
+  const { isPending, writeContract, isSuccess, isError } = useWriteContract()
   console.log("🚀 ~ Faucet ~ isSuccess:", isSuccess)
 
   const handleFaucet = () => {
     writeContract({
-      abi: mockErc20,
+      abi: MockERC20Abi.abi,
       address: MOCK_TOKEN_ADDRESS,
       functionName: "mint",
       args: [address, BigInt(1000e18)],
     })
   }
 
+  const addTokenAddress = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault()
+    if (!window.ethereum) {
+      toast.error("Wallet not found")
+      return
+    }
+
+    try {
+      await window.ethereum.request({
+        method: "wallet_watchAsset",
+        params: {
+          type: "ERC20",
+          options: {
+            address: MOCK_TOKEN_ADDRESS,
+            symbol: "WBTC",
+            decimals: 18,
+            image: "https://example.com/wbtc-logo.png",
+          },
+        },
+      })
+      toast.success("Token added to wallet successfully")
+    } catch (error: any) {
+      toast.error(`Failed to add token: ${error.message}`)
+    }
+  }
+
   useEffect(() => {
     if (isSuccess) {
-      toast("Success sending 1000 WBTC to your wallet")
+      toast.success("Success sending 1000 WBTC to your wallet")
+    } else if (isError) {
+      toast.error("Error sending 1000 WBTC to your wallet")
     }
-  }, [isSuccess])
+  }, [isSuccess, isError])
 
   return (
     <>
@@ -36,13 +64,20 @@ const Faucet = () => {
               Get free 1000 WBTC sent directly to your wallet.
             </p>
           </div>
-
-          <button
-            className="border border-main/50 bg-main/10 px-4 py-2 rounded-lg text-sm text-white cursor-pointer hover:border-main hover:bg-main/40 transition-all"
-            onClick={handleFaucet}
-          >
-            Receive 1000 Mock WBTC
-          </button>
+          <div className="flex gap-4">
+            <button
+              className="border border-main/50 bg-main/10 px-4 py-2 rounded-lg text-sm text-white cursor-pointer hover:border-main hover:bg-main/40 transition-all"
+              onClick={handleFaucet}
+            >
+              Receive 1000 Mock WBTC
+            </button>
+            <button
+              className="border border-main/50 bg-main/10 px-4 py-2 rounded-lg text-sm text-white cursor-pointer hover:border-main hover:bg-main/40 transition-all"
+              onClick={addTokenAddress}
+            >
+              Add Token Address
+            </button>
+          </div>
         </div>
         <p className="text-[10px] text-white/50 text-center">
           Note: We securely handle the provided wallet address while processing your request.

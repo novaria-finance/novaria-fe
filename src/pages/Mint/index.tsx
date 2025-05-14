@@ -3,8 +3,8 @@ import ClockIcon from "@/components/icon/ClockIcon"
 import FuelIcon from "@/components/icon/FuelIcon"
 import Preloader from "@/components/Preloader"
 import { Input, NovariaTokenLogo, WBTCTokenLogo } from "@/components/ui/Input"
-import mockErc20 from "@/data/mockERC20.json"
-import mockVault from "@/data/mockVault.json"
+import { MockERC20Abi } from "@/lib/abis/mockERC20Abi"
+import { mockVaultAbi } from "@/lib/abis/mockVaultAbi"
 import { FUNDING_VAULT_ADDRESS, MOCK_TOKEN_ADDRESS } from "@/utils/constants"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
@@ -22,7 +22,7 @@ export const Mint = () => {
   const { address } = useAccount()
 
   const { data: mockBalance } = useReadContract({
-    abi: mockErc20,
+    abi: MockERC20Abi.abi,
     address: MOCK_TOKEN_ADDRESS,
     functionName: "balanceOf",
     args: [address],
@@ -35,7 +35,7 @@ export const Mint = () => {
   } = useWriteContract()
 
   const simulateResult = useSimulateContract({
-    abi: mockVault,
+    abi: mockVaultAbi.abi,
     address: FUNDING_VAULT_ADDRESS,
     functionName: "deposit",
     args: [BigInt(mintAmount)],
@@ -48,7 +48,7 @@ export const Mint = () => {
   const handleMintAndApprove = async () => {
     // Approve
     writeContractAsync({
-      abi: mockErc20,
+      abi: MockERC20Abi.abi,
       address: MOCK_TOKEN_ADDRESS,
       functionName: "approve",
       args: [FUNDING_VAULT_ADDRESS, BigInt(mintAmount)],
@@ -56,7 +56,7 @@ export const Mint = () => {
       .then(async () => {
         // Mint
         await writeContractAsync({
-          abi: mockVault,
+          abi: mockVaultAbi.abi,
           address: FUNDING_VAULT_ADDRESS,
           functionName: "deposit",
           args: [BigInt(mintAmount)],
