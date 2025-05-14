@@ -19,7 +19,7 @@ function App() {
           <Route path="/deposit" element={<Deposit />} />
           <Route path="/swap" element={<Swap />} />
           <Route path="/faucet" element={<Faucet />} />
-          <Route path="/bridge" element={<Bridge />} />
+          {/* <Route path="/bridge" element={<Bridge />} /> */}
         </Routes>
       </Layout>
       <Toaster />
