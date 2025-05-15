@@ -4,7 +4,6 @@ import FuelIcon from "@/components/icon/FuelIcon"
 import Preloader from "@/components/Preloader"
 import { ChartComponent } from "@/components/ui/ChartComponent"
 import { Input, NovariaTokenLogo, WBTCTokenLogo } from "@/components/ui/Input"
-import { MockERC20Abi } from "@/lib/abis/mockERC20Abi"
 import { mockVaultAbi } from "@/lib/abis/mockVaultAbi"
 import { FUNDING_VAULT_ADDRESS, MOCK_TOKEN_ADDRESS } from "@/utils/constants"
 import { useEffect, useState } from "react"
@@ -94,10 +93,12 @@ export const Mint = () => {
               }}
             />
             <p className="text-xs text-white/50">
-              Your Balance{" "}
-              {(Number(mockBalance) / 1e18 - mintAmount).toLocaleString(undefined, {
-                maximumFractionDigits: 4,
-              })}
+              Your Balance:{" "}
+              {Number(mockBalance) > 0
+                ? (Number(mockBalance) / 1e18 - mintAmount).toLocaleString(undefined, {
+                    maximumFractionDigits: 4,
+                  })
+                : 0}
             </p>
           </div>
 
