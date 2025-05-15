@@ -63,18 +63,18 @@ export const ChartComponent = (props: any) => {
     })
 
     newSeries.setData(data)
-    lineSeries.setData([
-      { time: "2018-12-22", value: 10.51 },
-      { time: "2018-12-23", value: 11.11 },
-      { time: "2018-12-24", value: 12.02 },
-      { time: "2018-12-25", value: 13.32 },
-      { time: "2018-12-26", value: 14.17 },
-      { time: "2018-12-27", value: 15.89 },
-      { time: "2018-12-28", value: 16.46 },
-      { time: "2018-12-29", value: 17.92 },
-      { time: "2018-12-30", value: 18.68 },
-      { time: "2018-12-31", value: 22.67 },
-    ])
+    // lineSeries.setData([
+    //   { time: "2018-12-22", value: 22.67 },
+    //   { time: "2018-12-23", value: 18.68 },
+    //   { time: "2018-12-24", value: 17.92 },
+    //   { time: "2018-12-25", value: 16.46 },
+    //   { time: "2018-12-26", value: 15.89 },
+    //   { time: "2018-12-27", value: 14.17 },
+    //   { time: "2018-12-28", value: 13.32 },
+    //   { time: "2018-12-29", value: 12.02 },
+    //   { time: "2018-12-30", value: 11.11 },
+    //   { time: "2018-12-31", value: 10.0 },
+    // ])
     window.addEventListener("resize", handleResize)
 
     // Remove TV logo
